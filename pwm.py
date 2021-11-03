@@ -24,36 +24,81 @@ def setup():
 def loop():
         print ("Press Ctrl+C to end the program...")
         print ("(f) forward (b) back")
-        duty = 50
         
-        lastDirection = 'x'
         while True:
             direction = input("direction?:")
             
             if(direction =='f'):
-                print('forward')
-                if(lastDirection == 'f'):
-                    front(100)
-                elif(lastDirection == 'b'):
-                    front(0)
-                else:
-                    front(50)
+                go_forward()
             
             elif(direction == 'b'):
-                print('back')
-                if(lastDirection == 'b'):
-                    back(100)
-                elif(lastDirection == 'f'):
-                    back(0)
-                else:
-                    back(50)
-                
+                go_backward()
+
             else:
                 print("Unknown command...")
                 GPIO.output(MotorEnable, GPIO.LOW) # motor stop
-                
-            lastDirection = direction
+     
 
+def faster(duty):
+    duty=duty+10
+    if(duty<100):
+        return duty
+    else:
+        return 100
+
+def slower(duty):
+    duty=duty-10
+    if(duty>0):
+        return duty
+    else:
+        return 0
+
+def slow_stop(duty, dir):
+    while duty!=0:
+        duty = slower(duty)
+        time.sleep(.1)
+        if(dir=='f'):
+            front(duty)
+        elif(dir=='b'):
+            back(duty)
+
+def go_forward():
+    print('forward')
+    duty = 30
+    while True:
+        speed = input(" (i) increase or (d) to decrease speed (any) key to switch directions")
+
+        if(speed=='i'):
+            duty = faster(duty)
+        elif(speed == 'd'):
+            duty = slower(duty)
+        else:
+            print('Unknown speed request - full STOP- ready to switch')
+            slow_stop(duty, 'f')
+            break
+        
+        front(duty)
+
+def go_backward():
+
+    print('backward')
+    duty = 30
+    
+    while True:
+        speed = input(" (i) increase or (d) to decrease speed (any) key to switch directions")
+
+        if(speed=='i'):
+            duty = faster(duty)
+        elif(speed == 'd'):
+            duty = slower(duty)
+        else:
+            print('Unknown speed request - full STOP - ready to switch')
+            slow_stop(duty, 'b')
+            break
+        
+        back(duty)
+            
+    
 def destroy():
         forward.stop()
         backward.stop()
@@ -62,14 +107,14 @@ def destroy():
         GPIO.cleanup()                     # Release resource
         
 def front(duty):
+        print('forward  % ' + duty )
         GPIO.output(MotorEnable, GPIO.HIGH) # motor driver enable
-        print(duty)
         forward.ChangeDutyCycle(duty)
         backward.ChangeDutyCycle(0)
         
 def back(duty):
+        print('back  % ' + duty )
         GPIO.output(MotorEnable, GPIO.HIGH) # motor driver enable
-        print(duty)
         forward.ChangeDutyCycle(0)
         backward.ChangeDutyCycle(duty)
         
