@@ -56,7 +56,7 @@ def slower(duty):
 def slow_stop(duty, dir):
     while duty!=0:
         duty = slower(duty)
-        time.sleep(.1)
+        time.sleep(.2)
         if(dir=='f'):
             front(duty)
         elif(dir=='b'):
@@ -64,9 +64,11 @@ def slow_stop(duty, dir):
 
 def go_forward():
     print('forward')
-    duty = 30
+    duty = 50
+    
     while True:
-        speed = input(" (i) increase or (d) to decrease speed (any) key to switch directions")
+        front(duty)
+        speed = input("(i) increase or (d) to decrease speed (any) key to switch directions ")
 
         if(speed=='i'):
             duty = faster(duty)
@@ -76,16 +78,14 @@ def go_forward():
             print('Unknown speed request - full STOP- ready to switch')
             slow_stop(duty, 'f')
             break
-        
-        front(duty)
 
 def go_backward():
-
     print('backward')
-    duty = 30
+    duty = 50
     
     while True:
-        speed = input(" (i) increase or (d) to decrease speed (any) key to switch directions")
+        back(duty)
+        speed = input("(i) increase or (d) to decrease speed (any) key to switch directions ")
 
         if(speed=='i'):
             duty = faster(duty)
@@ -95,9 +95,6 @@ def go_backward():
             print('Unknown speed request - full STOP - ready to switch')
             slow_stop(duty, 'b')
             break
-        
-        back(duty)
-            
     
 def destroy():
         forward.stop()
@@ -107,13 +104,13 @@ def destroy():
         GPIO.cleanup()                     # Release resource
         
 def front(duty):
-        print('forward  % ' + duty )
+        print('forward  % ' , duty )
         GPIO.output(MotorEnable, GPIO.HIGH) # motor driver enable
         forward.ChangeDutyCycle(duty)
         backward.ChangeDutyCycle(0)
         
 def back(duty):
-        print('back  % ' + duty )
+        print('back  % ' , duty )
         GPIO.output(MotorEnable, GPIO.HIGH) # motor driver enable
         forward.ChangeDutyCycle(0)
         backward.ChangeDutyCycle(duty)
