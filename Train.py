@@ -7,7 +7,7 @@ class Train:
         self.enable_pin = enable_pin
         self.forward_pin = forward_pin
         self.backward_pin = backward_pin
-        self.duty = None
+        self.duty = 0
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
@@ -23,6 +23,7 @@ class Train:
         GPIO.output(self.enable_pin, GPIO.LOW)
 
     def new_speed(self, duty):
+        print("Current speed % ", duty)
         if(duty >= 0):
             self.forward.ChangeDutyCycle(duty)
             self.backward.ChangeDutyCycle(0)
@@ -45,6 +46,7 @@ class Train:
         self.new_speed(self.duty)
 
     def stop(self):
+        print("Stopping..")
         while self.duty!=0:
             if(self.duty>0):
                 self.decrease_speed()
