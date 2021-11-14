@@ -20,7 +20,7 @@ class Train:
         self.forward.start(0)
         self.backward.start(0)
 
-        GPIO.output(self.enable_pin, GPIO.LOW)
+        GPIO.output(self.enable_pin, GPIO.HIGH)
 
     def new_speed(self, duty):
         print("Current speed % ", duty)
@@ -59,8 +59,8 @@ class Train:
 
     def destroy(self):
         self.stop()
-        
+
         self.forward.stop()
         self.backward.stop()
-        
-        GPIO.output(self.enable_pin, GPIO.LOW) 
+
+        GPIO.output(self.enable_pin, GPIO.LOW)
